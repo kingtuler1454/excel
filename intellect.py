@@ -18,35 +18,39 @@ def read_excel(filename: str):  # функция принимающая имя �
         information.append(dict(zip(column_names, column_students)))  # создаем из списка имён столбцов и список значений студента словарик  и добавляем каждый словарик в список information
     return information  # вовзращаем список из словарей
 
+def del_None(information):
+    tmp=[]
+    for elem in information:
+        tmp.append({key:val for key,val in elem.items() if val != None  and val!=''})
+    return tmp
 
 def sum(list1, list2):  # функция сложения двух списков из двух эксель таблиц
-    bar = IncrementalBar(
-        "Countdown", max=len(list1)
-    )  # для отображения прогресса в консоли
+    list1=uniq_list(list1)
+    list2=uniq_list(list2)
+    
+    bar = IncrementalBar( "Countdown", max=len(list1) )  # для отображения прогресса в консоли
     tmp2=list2
     for elem1 in list1:  # для каждого элемента из первой таблицы
         for elem2 in list2:  # для каждого элемента из второйтаблицы
             # теперь проверяем есть ли среди двух таблиц повторяющийся студент
-            if (
-                elem1.get("Дата рождения").lower() == elem2.get("Дата рождения").lower()
-            ):  # сначала проверяем равны ли даты рождения,
-                if (
-                    elem1.get("Фамилия").lower() == elem2.get("Фамилия").lower()
-                ):  # если даты равны то затем фамилии,
+            if ( elem1.get("Дата рождения").lower() == elem2.get("Дата рождения").lower()):  # сначала проверяем равны ли даты рождения,
+                if (elem1.get("Фамилия").lower() == elem2.get("Фамилия").lower()):  # если даты равны то затем фамилии,
                     if elem1.get("Отчество").lower() == elem2.get("Отчество").lower():
                         if ( elem1.get("Имя").lower() == elem2.get("Имя").lower()):  # ну если и имена равны то это явно один и тот же человек
                             value = set(elem2) - set(elem1)  # смотрим разницу между словарями. получитс список ключей второго словаря, которых нет в первом
                             for new_key in list(value):  # для каждого такого ключа добавляем занчение  в первый словарь
                                 elem1[new_key] = elem2.get(new_key)
-                            tmp2.remove(elem2)
-
+                            tmp2.remove(elem2) #удаляем значения одинаковых студентов из копии списка2
         bar.next()  # для отображения прогресса в консоли
 
     return list1+tmp2  # возвращаем дополненный первый список
 
 
-def uniq_list(list1):
-    tmp=[]
+def uniq_list(information):
+    list1=[]
+    for elem in information:
+        tmp={key:val for key,val in elem.items() if val != None  and val!=''}
+        if (len(tmp))!=0:list1.append(tmp) # удаляем значения у словарей где None 
 
     for i in range (len(list1)-1):
         for j in range (1,len(list1)-1):
@@ -64,7 +68,7 @@ def uniq_list(list1):
 
 
 def read_officer(filename: str): # 44 столбца заранее известных
-    bar = IncrementalBar( "Countdown", max=45)  # для отображения прогресса в консоли
+
     information = []  # список информации о студентах
     column_names = [
         "ФГОО ВО в котором обучается студент",#1
@@ -116,25 +120,23 @@ def read_officer(filename: str): # 44 столбца заранее извест
     wb = op.load_workbook(filename, data_only=True)
     sheet = wb.active
    
-    print(sheet.cell(row=5, column=36).value)
     
-    student_number=5
-    while sheet.cell(row=student_number, column=1).value!='' or sheet.cell(row=student_number, column=1).value!='None':
-        print(sheet.cell(row=student_number, column=1).value)
+    for student_number in trange (5,sheet.max_row + 1):
         column_students = []  # список значений студента в этих столбцах
         for i in range(1,45):column_students.append(sheet.cell(row=student_number, column=i).value )
-        information.append(dict(zip(column_names, column_students)))  # создаем из списка имён столбцов и список значений студента словарик  и добавляем каждый словарик в список information
-        student_number+=1
-       
-        bar.next() 
-        break # для отображения прогресса в консоли
+        information.append(dict(zip(column_names, column_students)))  # создаем из списка имён столбцов и список значений студента словарик  и добавляем каждый словарик в список information  
     return information
 
 if __name__ == "__main__":
+     #read_officer читает
+    #СОЕДИНЯЕТ содинение+ проверка на уникальность 
+    #записывает в файл
+
     # list1 = read_excel("Солдаты их БД ВУЦ.xlsx")
     # print(list1)
      with open("tmp.txt", mode="w+") as file:
-        file.write(str(read_officer('офиц.xlsx')))
+        tmp=read_officer('офиц.xlsx')
+        
     
 
     # list1=uniq_list(read_excel( 'офиц.xlsx'))
