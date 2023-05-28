@@ -182,8 +182,8 @@ def write_excel(information,number):
         "Приказ о отчислении",	#43
         "Причина отчисления"    #44			
         ]
-        shutil.copyfile('Не трогать!(Шаблон офицеров).xlsx', '(Итог)Офицеры.xlsx')
-        wb = op.load_workbook('(Итог)Офицеры.xlsx', data_only=True)
+        shutil.copyfile('workprogram/'+'Не трогать!(Шаблон офицеров).xlsx', 'Итоговые таблицы/(Итог)Офицеры.xlsx')
+        wb = op.load_workbook('Итоговые таблицы/(Итог)Офицеры.xlsx', data_only=True)
         sheet = wb.active
         id=0
         for j in range (len( information)):
@@ -193,7 +193,7 @@ def write_excel(information,number):
                     if  name_column[i-1] in information[j].keys(): tmp=information[j][name_column[i-1]]
                     sheet.cell(row=id+5, column=i, value=tmp)
                 id+=1
-        wb.save('(Итог)Офицеры.xlsx')
+        wb.save('Итоговые таблицы/(Итог)Офицеры.xlsx')
     elif number==2:
         name_column=[
         "ФГОО ВО в котором обучается студент",#1
@@ -242,8 +242,8 @@ def write_excel(information,number):
         "Приказ о отчислении",	#43
         "Причина отчисления"    #44			
         ]
-        shutil.copyfile('Не трогать!(Шаблон солдат).xlsx', '(Итог)Солдаты.xlsx')
-        wb = op.load_workbook('(Итог)Солдаты.xlsx', data_only=True)
+        shutil.copyfile('workprogram/'+'Не трогать!(Шаблон солдат).xlsx', 'Итоговые таблицы/(Итог)Солдаты.xlsx')
+        wb = op.load_workbook('Итоговые таблицы/(Итог)Солдаты.xlsx', data_only=True)
         sheet = wb.active
         id=0
         for j in range (len( information)):
@@ -253,7 +253,7 @@ def write_excel(information,number):
                     if  name_column[i-1] in information[j].keys(): tmp=information[j][name_column[i-1]]
                     sheet.cell(row=id+5, column=i, value=tmp)
                 id+=1
-        wb.save('(Итог)Солдаты.xlsx')
+        wb.save('Итоговые таблицы/(Итог)Солдаты.xlsx')
     elif number==3:
         print('своя таблица')
     else:
@@ -283,11 +283,11 @@ def write_excel(information,number):
                 if  name_column[i-1] in information[j].keys(): tmp=information[j][name_column[i-1]]
                 ws.cell(row=j+2, column=i, value=tmp)
 
-        wb.save("Все данные.xlsx")
+        wb.save("Итоговые таблицы/Все данные.xlsx")
 
 if __name__ == "__main__":
     
-    all_files=listdir(getcwd())
+    all_files=listdir(getcwd()+'/Таблицы откуда берём информацию')
     excel_name=[]
     for elem in all_files:
         filename, file_extension = path.splitext(elem)
@@ -297,12 +297,12 @@ if __name__ == "__main__":
     print("Программа увидела следующие таблицы:")
     for elem in excel_name:
         print(elem)
-    chose=input("------------------------------------------------------------------------------\n\n\nПродожить? \n1)Да ")
+    chose=input("------------------------------------------------------------------------------\nПродожить? \n1)Да ")
     if chose=='1':
         information_list=[]
         for elem in excel_name:
             print('Читаем файл   '+str(elem))
-            information_list.append(read_excel(elem))
+            information_list.append(read_excel('Таблицы откуда берём информацию/'+elem))
         print ("\n" * 100)
         print('Данные успешно собраны')
         print('Совмещаем данные')
@@ -319,10 +319,10 @@ if __name__ == "__main__":
             if tmp=='1':
                 write_excel(information_list[0],1)
                 write_excel(information_list[0],2)
-                input('Успешно, в папке с таблицами создали "(Итог)Офицеры.xlsx" и "(Итог)Солдаты.xlsx" ')
+                input('Успешно, создали "(Итог)Офицеры.xlsx" и "(Итог)Солдаты.xlsx"  в папке "Итоговые таблицы"')
             elif tmp=='2':
                 write_excel(information_list[0],4)
-                input('Успешно, в папке с таблицами создали "Все данные.xlsx" ')
+                input('Успешно,  создали "Все данные.xlsx"  в папке "Итоговые таблицы"')
             else : input('Нет такого варианта..')
 
 
